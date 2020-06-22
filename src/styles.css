@@ -1,0 +1,10 @@
+label{
+    font-weight: bold;
+}
+
+.div-btns-tela-pesquisa{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}

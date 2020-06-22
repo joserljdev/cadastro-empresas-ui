@@ -1,0 +1,188 @@
+<div class="container" style="margin-top: 20px;">
+    <form autocomplete="off" [formGroup]="formulario" (ngSubmit)="salvar()">
+        <div class="col-12">
+            <h2>Formulário para Cadastro: {{ editando() ? 'Edição de' : 'Novo' }} Lançamento</h2>
+        </div>
+
+        <div *ngIf="formulario.invalid && formulario.touched" class="alert alert-danger" role="alert">
+            Preencha todos os campos obrigatórios (*)
+        </div>
+
+        <div class="col-12" style="margin-top: 40px;">
+
+            <div class="form-group row">
+                <label for="cnpj" class="col-md-2 col-form-label">CNPJ:*</label>
+                <div class="col-md-3">
+                    <input type="text" mask="00.000.000/0000-00" id="cnpj" class="form-control"
+                        formControlName="cnpj" placeholder="CNPJ da empresa">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('cnpj')" msgErro="CNPJ é obrigatório">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="verificaCNPJInvalido()" msgErro="CNPJ inválido">
+                    </app-campo-controle-errors>
+                </div>
+
+                <label for="tipo" class="col-md-2 col-form-label offset-md-1">Tipo da Empresa:*</label>
+                <div class="col-md-4">
+                    <select id="tipo" class="custom-select" formControlName="tipo" [compareWith]="compararEmpresas">
+                        <option [ngValue]="null" disabled>selecione o tipo da empresa</option>
+                        <option *ngFor="let tipoEmp of tipos" [ngValue]="tipoEmp">{{tipoEmp.descricao}}</option>
+                    </select>
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('tipo')"
+                        msgErro="Tipo da Empresa é obrigatório">
+                    </app-campo-controle-errors>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="nome" class="col-md-2 col-form-label">Nome da Empresa:*</label>
+                <div class="col-md-4">
+                    <input type="text" id="nome" class="form-control" formControlName="nome"
+                        placeholder="nome da empresa">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('nome')"
+                        msgErro="Nome da Empresa é obrigatório">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('nome').hasError('maxlength')"
+                        msgErro="O nome da empresa deve conter até 40 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+
+                <label for="razaoSocial" class="col-md-2 col-form-label">Razão Social:*</label>
+                <div class="col-md-4">
+                    <input type="text" id="razaoSocial" class="form-control" formControlName="razaoSocial"
+                        placeholder="razão social">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('razaoSocial')"
+                        msgErro="Razão Social é obrigatória">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('razaoSocial').hasError('maxlength')"
+                        msgErro="A razão social deve conter até 40 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="contato" class="col-md-2 col-form-label">Contato:*</label>
+                <div class="col-md-4">
+                    <input type="text" id="contato" name="contato" class="form-control" formControlName="contato"
+                        placeholder="contato">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('contato')"
+                        msgErro="Contato é obrigatório">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('contato').hasError('maxlength')"
+                        msgErro="O contato deve conter até 40 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+
+                <label for="email" class="col-md-1 col-form-label">E-mail:*</label>
+                <div class="col-md-5">
+                    <input type="text" id="email" name="email" class="form-control" formControlName="email"
+                        placeholder="e-mail">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('email')" msgErro="E-mail é obrigatório">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="verificaEmailInvalido()" msgErro="E-mail inválido">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('email').hasError('maxlength')"
+                        msgErro="O e-mail deve conter até 80 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="cep" class="col-md-2 col-form-label">CEP:*</label>
+                <div class="col-md-2">
+                    <input type="text" mask="00000-000" id="cep" name="cep" class="form-control" formControlName="cep"
+                        placeholder="digite o cep" style="width: 175px;">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('cep')" msgErro="CEP é obrigatório">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('cep').hasError('cepInvalido')"
+                        msgErro="CEP inválido">
+                    </app-campo-controle-errors>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-secondary" (click)="consultarCEP()"
+                        [disabled]="!formulario.get('cep').valid">Buscar CEP</button>
+                </div>
+
+                <label for="estado" class="col-md-1 col-form-label">Estado:*</label>
+                <div class="col-md-5">
+                    <input type="text" id="estado" name="estado" class="form-control" formControlName="estado"
+                        placeholder="nome do estado">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('estado')"
+                        msgErro="Estado é obrigatório">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('estado').hasError('maxlength')"
+                        msgErro="O estado deve conter até 40 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="bairro" class="col-md-2 col-form-label">Bairro:*</label>
+                <div class="col-md-4">
+                    <input type="text" id="bairro" name="bairro" class="form-control" formControlName="bairro"
+                        placeholder="nome do bairro">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('bairro')"
+                        msgErro="Bairro é obrigatório">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('bairro').hasError('maxlength')"
+                        msgErro="O bairro deve conter até 40 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+
+                <label for="cidade" class="col-md-1 col-form-label">Cidade:*</label>
+                <div class="col-md-5">
+                    <input type="text" id="cidade" name="cidade" class="form-control" formControlName="cidade"
+                        placeholder="nome da cidade">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('cidade')"
+                        msgErro="Cidade é obrigatória">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('cidade').hasError('maxlength')"
+                        msgErro="A cidade deve conter até 40 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="logradouro" class="col-md-2 col-form-label">Logradouro:*</label>
+                <div class="col-md-4">
+                    <input type="text" id="logradouro" name="logradouro" class="form-control"
+                        formControlName="logradouro" placeholder="nome do logradouro">
+
+                    <app-campo-controle-errors [mostrarErro]="verificaRequired('logradouro')"
+                        msgErro="Logradouro é obrigatório">
+                    </app-campo-controle-errors>
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('logradouro').hasError('maxlength')"
+                        msgErro="O logradouro deve conter até 40 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+
+                <label for="complemento" class="col-md-2 col-form-label">Complemento:</label>
+                <div class="col-md-4">
+                    <input type="text" id="complemento" name="complemento" class="form-control"
+                        formControlName="complemento" placeholder="complemento">
+
+                    <app-campo-controle-errors [mostrarErro]="formulario.get('complemento').hasError('maxlength')"
+                        msgErro="O complemento deve conter até 40 caracteres">
+                    </app-campo-controle-errors>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 div-btns-tela-pesquisa" style="padding: 25px;">
+            <a class="btn btn-primary" routerLink="/empresas" role="button"
+                style="width: 250px; margin: 1px 10px;">Lista de Empresas</a>
+            <button type="submit" [disabled]="!formulario.valid" class="btn btn-success"
+                style="width: 250px; margin: 1px 10px;">Salvar</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,68 @@
+<div class="container" style="margin-top: 20px;">
+    <form autocomplete="off" [formGroup]="formPesquisa" (ngSubmit)="pesquisar()">
+        <div class="col-12">
+            <h2>Empresas Cadastradas</h2>
+        </div>
+
+        <div class="col-12" style="margin-top: 50px;">
+            <div class="row">
+                <div class="col-md-1">
+                    <label for="cnpj" class="control-label">CNPJ:</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" mask="00.000.000/0000-00" id="cnpj" class="form-control" 
+                        formControlName="cnpj" placeholder="digite o CNPJ para filtro" (input)="recarregar()">
+                </div>
+
+                <div class="col-md-2">
+                    <label for="nome" class="control-label">Nome da Empresa:</label>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" id="nome" class="form-control" 
+                        formControlName="nome" placeholder="digite o nome da empresa para filtro" (input)="recarregar()">
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12 div-btns-tela-pesquisa" style="padding: 25px;">
+            <a type="button" class="btn btn-primary" routerLink="/empresas/novo" role="button" style="width: 250px; margin: 1px 10px;">Novo Cadastro</a>
+            <button type="submit" class="btn btn-success" style="width: 250px; margin: 1px 10px;">Pesquisar</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr class="thead-primary">
+                    <th scope="col">Id</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">CNPJ</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let e of empresas | paginate: { itemsPerPage: 5, currentPage: atual }">
+                    <td>{{e.id}}</td>
+                    <td>{{e.nome}}</td>
+                    <td>{{e.cnpj | CNPJ}}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info" [routerLink]="['/empresas', e.id]" role="button" style="width: 100px; margin: 1px 5px;">Editar</a>
+                        <button class="btn btn-sm btn-danger" style="width: 100px; margin: 1px 5px;"
+                            (click)="confirmarExclusao(e.id)">Excluir</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" [hidden]="empresas.length">Nenhuma empresa encontrada!</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-sm-12" style="padding: 0px;">
+        <span><strong>Qtd. Registros: {{empresas.length}}</strong></span>
+    </div>
+
+    <div class="col-sm-12" style="text-align:center;">
+        <pagination-controls (pageChange)="atual = $event"></pagination-controls>
+    </div>
+</div>
